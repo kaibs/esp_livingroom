@@ -23,11 +23,11 @@ char msg_humidity[MSG_BUFFER_SIZE];
 String receivedString;
 
 //FS1000A RF-Transmitter
-#define rfpin 15
+#define rfpin 2
 RCSwitch transmitter = RCSwitch();
 
 //DHT11 sensor
-#define dhtpin 2
+#define dhtpin 4
 DHTesp dht;
 
 //timer for sensor-publish
