@@ -52,13 +52,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
   
     if (receivedString == "ON"){
       transmitter.sendTriState("F0FFFF0FFFFF");
-      delay(100);
       Serial.println("Ambilight ON");
     }
 
     if (receivedString == "OFF"){
       transmitter.sendTriState("F0FFFF0F0000");
-      delay(100);
       Serial.println("Ambilight OFF");
     }
     receivedString = "";
@@ -73,13 +71,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
   
     if (receivedString == "ON"){
       transmitter.sendTriState("FF0FF0FFFFFFF");
-      delay(100);
       Serial.println("Heartlight ON");
     }
 
     if (receivedString == "OFF"){
       transmitter.sendTriState("FF0FF0FF0000");
-      delay(100);
       Serial.println("Heartlight OFF");
     }
   }
@@ -138,7 +134,7 @@ void setup() {
   //rf
   transmitter.enableTransmit(rfpin);
   transmitter.setProtocol(1);
-  transmitter.setPulseLength(425);
+  transmitter.setPulseLength(187);
 
 }
 
