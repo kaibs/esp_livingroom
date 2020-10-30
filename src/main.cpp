@@ -13,8 +13,8 @@ const char* user= MQTT_USER;
 const char* passw= MQTT_PASSWORD;
 
 //Wifi
-WiFiClient espLivingRoom;
-PubSubClient client(espLivingRoom);
+WiFiClient espBedRoom;
+PubSubClient client(espBedRoom);
 
 //mqtt messages
 #define MSG_BUFFER_SIZE	(50)
@@ -44,7 +44,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print(topic);
   Serial.print("] ");
 
- if (strcmp(topic,"home/livingroom/ambilight/switch")==0){
+ if (strcmp(topic,"home/bedroom/ambilight/switch")==0){
   
   for (int i=0;i<length;i++) {
 
@@ -53,15 +53,36 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if (receivedString == "ON"){
       transmitter.sendTriState("F0FFFF0FFFFF");
       delay(100);
-      Serial.println("ON");
+      Serial.println("Ambilight ON");
     }
 
     if (receivedString == "OFF"){
       transmitter.sendTriState("F0FFFF0F0000");
       delay(100);
-      Serial.println("OFF");
+      Serial.println("Ambilight OFF");
     }
+    receivedString = "";
+  }
  }
+
+ if (strcmp(topic,"home/bedroom/heartlight/switch")==0){
+  
+  for (int i=0;i<length;i++) {
+
+    receivedString += (char)payload[i];
+  
+    if (receivedString == "ON"){
+      transmitter.sendTriState("FF0FF0FFFFFFF");
+      delay(100);
+      Serial.println("Heartlight ON");
+    }
+
+    if (receivedString == "OFF"){
+      transmitter.sendTriState("FF0FF0FF0000");
+      delay(100);
+      Serial.println("Heartlight OFF");
+    }
+  }
 
   receivedString = "";
  }
@@ -69,16 +90,17 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 
 //reconnect for mqtt-broker
-void reconnect() {
+void reconnect(){
  // Loop until we're reconnected
  while (!client.connected()) {
  Serial.print("Attempting MQTT connection...");
  // Attempt to connect
- if (client.connect("espLivingRoom", user, passw)) {
+ if (client.connect("espBedRoom", user, passw)) {
   Serial.println("connected");
 
   //subscribe
-  client.subscribe("home/livingroom/ambilight/switch");
+  client.subscribe("home/bedroom/ambilight/switch");
+  client.subscribe("home/bedroom/heartlight/switch");
   
  } else {
   Serial.print("failed, rc=");
@@ -100,7 +122,7 @@ void setup() {
   dht.setup(dhtpin, DHTesp::DHT11);
 
   //Wifi
-  WiFi.hostname("espLivingRoom");
+  WiFi.hostname("espBedRoom");
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) {
@@ -141,12 +163,12 @@ void loop() {
     char helpval[8];
     dtostrf(temperature, 6, 2, helpval);
     snprintf (msg_temp, MSG_BUFFER_SIZE, helpval);
-    client.publish("home/livingroom/temperature", msg_temp);
+    client.publish("home/bedroom/temperature", msg_temp);
     delay(100);
 
     dtostrf(humidity, 6, 2, helpval);
     snprintf (msg_humidity, MSG_BUFFER_SIZE, helpval);
-    client.publish("home/livingroom/humidity", msg_humidity);
+    client.publish("home/bedroom/humidity", msg_humidity);
 
     timer = currentTime;
 
