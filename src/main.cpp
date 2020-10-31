@@ -25,6 +25,7 @@ String receivedString;
 //FS1000A RF-Transmitter
 #define rfpin 2
 RCSwitch transmitter = RCSwitch();
+int repetitions = 10;
 
 //DHT11 sensor
 #define dhtpin 4
@@ -36,6 +37,15 @@ const long interval = 20000; //20 Sek.
 
 
 //-------------------------------------functions----------------------------------
+
+
+void sendSignal(char tristate[]){
+  for (int i=0;i<repetitions;i++){
+    transmitter.sendTriState(tristate);
+    delay(10);
+  }
+}
+
 
 //callback for receiving MQTT
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -51,12 +61,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
     receivedString += (char)payload[i];
   
     if (receivedString == "ON"){
-      transmitter.sendTriState("F0FFFF0FFFFF");
+      sendSignal("F0FFFF0FFFFF");
       Serial.println("Ambilight ON");
     }
 
     if (receivedString == "OFF"){
-      transmitter.sendTriState("F0FFFF0F0000");
+      sendSignal("F0FFFF0F0000");
       Serial.println("Ambilight OFF");
     }
     receivedString = "";
@@ -70,12 +80,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
     receivedString += (char)payload[i];
   
     if (receivedString == "ON"){
-      transmitter.sendTriState("FF0FF0FFFFFFF");
+      sendSignal("FF0FF0FFFFFFF");
       Serial.println("Heartlight ON");
     }
 
     if (receivedString == "OFF"){
-      transmitter.sendTriState("FF0FF0FF0000");
+      sendSignal("FF0FF0FF0000");
       Serial.println("Heartlight OFF");
     }
   }
@@ -133,8 +143,8 @@ void setup() {
 
   //rf
   transmitter.enableTransmit(rfpin);
-  transmitter.setProtocol(1);
-  transmitter.setPulseLength(187);
+  transmitter.setProtocol(2);
+  transmitter.setPulseLength(320);
 
 }
 
