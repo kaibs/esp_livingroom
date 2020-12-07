@@ -69,8 +69,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
       sendSignal("F0FFFF0F0000");
       Serial.println("Ambilight OFF");
     }
-    receivedString = "";
   }
+  receivedString = "";
  }
 
  if (strcmp(topic,"home/bedroom/heartlight/switch")==0){
@@ -80,7 +80,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     receivedString += (char)payload[i];
   
     if (receivedString == "ON"){
-      sendSignal("FF0FF0FFFFFFF");
+      sendSignal("FF0FF0FFFFFF");
       Serial.println("Heartlight ON");
     }
 
