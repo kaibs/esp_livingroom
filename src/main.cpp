@@ -42,7 +42,7 @@ const long interval = 20000; //20 Sek.
 void sendSignal(char tristate[]){
   for (int i=0;i<repetitions;i++){
     transmitter.sendTriState(tristate);
-    delay(10);
+    delay(40);
   }
 }
 
